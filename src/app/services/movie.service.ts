@@ -12,7 +12,7 @@ export class MovieService {
 
   constructor( private http: HttpClient ) { }
 
-  private getURL(request: string, language: string): string {
+  private getURL(request: string, language?: string): string {
     return `${this.urlMoviedb}${request}&api_key=${this.apikey}&language=${language}`;
   }
 
@@ -28,7 +28,7 @@ export class MovieService {
     const request = `/discover/movie?primary_release_date.gte=${ fromDateStr }&primary_release_date.lte=${ untilDateStr }`;
     const x = this.getURL(request, 'es');
 
-    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map(res => res.results));
+    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map((res: any) => res.results));
 
   }
 
@@ -37,7 +37,7 @@ export class MovieService {
     const request = '/discover/movie?sort_by=popularity.desc';
     const x = this.getURL(request, 'es');
 
-    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map(res => res.results));
+    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map((res: any) => res.results));
 
   }
 
@@ -46,7 +46,7 @@ export class MovieService {
     const request = '/discover/movie?certification_country=US&certification.lte=G&sort_by=popularity.desc';
     const x = this.getURL(request, 'es');
 
-    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map(res => res));
+    return this.http.jsonp(x, 'callback=JSONP_CALLBACK').pipe(map((res: any) => res.results));
 
   }
 
@@ -56,13 +56,18 @@ export class MovieService {
     const x = this.getURL(request, 'es');
 
     return this.http.jsonp(x, 'callback=JSONP_CALLBACK')
-      .pipe(map(res => {
+      .pipe(map((res: any) => {
 
         this.movies = res.results;
         console.log(this.movies);
         return res;
 
       }));
+  }
+
+  public getMovie( id:string ){
+    let url = `${this.urlMoviedb}/movie/${ id }?api_key=${this.apikey}&language=es`;
+    return this.http.jsonp(url, 'callback=JSONP_CALLBACK').pipe(map((res: any) => res));
   }
 
 }
